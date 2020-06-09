@@ -11,12 +11,14 @@ import CoreLocation
 
 protocol WeatherDelegate {
     func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel)
+
     func onError(error: Error)
 }
 
 class WeatherService {
     
     var delegate: WeatherDelegate?
+    var weather: WeatherModel?
     
     let URL_BASE = "https://api.openweathermap.org/data/2.5/onecall?appid=fb18c3a9c1c6ebf133fd0f69ba87ec46&units=imperial"
     
@@ -40,6 +42,7 @@ class WeatherService {
                 if let data = data {
                     if let weather = self.parseJSON(data) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
+                        //self.delegate?.updateView(self, weather: weather)
                         print(weather)
                     }
                 }
@@ -56,7 +59,19 @@ class WeatherService {
             let temp = decodedData.current.temp
             let city = decodedData.timezone
             let main = decodedData.current.weather[0].description
-            let weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main)
+            
+            var hourlyForecast = [Hourly]()
+            for i in 1...5 {
+                let time = decodedData.hourly[1].dt
+                //let icon = decodedData.hourly[1].weather[1].id
+                let temp = decodedData.hourly[1].temp
+                let hourly = Hourly(dt: time, temp: temp)
+                hourlyForecast.append(hourly)
+            }
+            
+            weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main, hourlyForecast: hourlyForecast)
+            print(hourlyForecast)
+            //dt: dt, forecastTemp: forecastTemp, forecastId: forecastId)
             return weather
         } catch {
             delegate?.onError(error: error)

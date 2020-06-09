@@ -11,10 +11,8 @@ import Foundation
 struct WeatherData: Codable {
     let timezone: String
     let current: Current
-    //let hourly: Hourly
-   // let daily: Daily
-    
-    
+    let hourly: [Hourly]
+   // let daily: Daily    
 }
 
 struct Current: Codable {
@@ -27,18 +25,15 @@ struct Weather: Codable {
     let description: String
 }
 
-//struct Hourly: Codable {
-//    let dt: Int
-//    let temp: Double
-//    let weather: [Weather]
-//}
+struct Hourly: Codable {
+    let dt: Double
+    let temp: Double
+    ///let id: Int
+    //let weather: [Weather]
+}
 //
 //struct Daily: Codable {
 //    let dt: Int
 //    let temp: [Temp]
 //    let weather: [Weather]
 //}
-
-struct Temp: Codable {
-    let day: Double
-}

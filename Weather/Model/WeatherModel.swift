@@ -13,30 +13,29 @@ struct WeatherModel {
     let temp: Double
     let city: String
     let condition: String
+    let hourlyForecast: [Hourly]
+//    let dt: Double
+//    let forecastTemp: Double
+//    let forecastId: Int
     
     var conditionIcon: String {
-        switch conditionId {
-        case 200...232:
+        switch (conditionId, conditionId)  {
+        case (200...232, 200...232):
             return "cloud.bolt"
-        case 300...321:
+        case (300...321, 300...321):
             return "cloud.drizzle"
-        case 500...531:
+        case (500...531, 500...531):
             return "cloud.rain"
-        case 600...622:
+        case (600...622, 600...622):
             return "cloud.snow"
-        case 741:
+        case (741, 741):
             return "cloud.fog"
-        case 800:
+        case (800, 800):
             return "sun.max"
-        case 801...804:
+        case (801...804, 801...804):
             return "cloud"
         default:
             return "cloud"
         }
     }
-    
-    var temperatureString: String {
-        return String(format: "%.1f", temp) + "°"
-    }
-    
 }
