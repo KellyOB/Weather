@@ -13,10 +13,8 @@ struct WeatherModel {
     let temp: Double
     let city: String
     let condition: String
-    let hourlyForecast: [Hourly]
-//    let dt: Double
-//    let forecastTemp: Double
-//    let forecastId: Int
+    let hourlyForecast: [HourlyModel]
+    let dailyForecast: [DailyModel]
     
     var conditionIcon: String {
         switch (conditionId, conditionId)  {
@@ -38,4 +36,16 @@ struct WeatherModel {
             return "cloud"
         }
     }
+}
+
+struct HourlyModel {
+    let dt: Double
+    let forecastTemp: Double
+    let conditionId: Int
+}
+
+struct DailyModel {
+    let dt: Date
+    let forecastTemp: Double
+    let conditionId: Int
 }

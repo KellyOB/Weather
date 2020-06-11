@@ -9,8 +9,8 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-
+class ViewController: UIViewController {
+    
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var weatherLabel: UILabel!
@@ -19,89 +19,135 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var todayButton: UIButton!
     @IBOutlet weak var weeklyButton: UIButton!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
-    @IBOutlet weak var collectionView: UICollectionView!
+    
+    @IBOutlet weak var timeDateLabel1:UILabel!
+    @IBOutlet weak var timeDateLabel2:UILabel!
+    @IBOutlet weak var timeDateLabel3:UILabel!
+    @IBOutlet weak var timeDateLabel4:UILabel!
+    @IBOutlet weak var timeDateLabel5:UILabel!
+    
+    @IBOutlet weak var iconImage1:UIImageView!
+    @IBOutlet weak var iconImage2:UIImageView!
+    @IBOutlet weak var iconImage3:UIImageView!
+    @IBOutlet weak var iconImage4:UIImageView!
+    @IBOutlet weak var iconImage5:UIImageView!
+    
+    @IBOutlet weak var tempLabel1:UILabel!
+    @IBOutlet weak var tempLabel2:UILabel!
+    @IBOutlet weak var tempLabel3:UILabel!
+    @IBOutlet weak var tempLabel4:UILabel!
+    @IBOutlet weak var tempLabel5:UILabel!
     
     var weatherService = WeatherService()
     var locationManager = CLLocationManager()
-      
+    var isToday = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
         weatherService.delegate = self
         locationManager.delegate = self
-    locationManager.requestWhenInUseAuthorization()
+        locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-         
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full
         let today = "\(dateFormatter.string(from: Date() as Date))"
         dateLabel.text = String(today)
         
-        print(today)
+        if isToday {
+            todayButton.tintColor = #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1)
+            weeklyButton.tintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+        } else {
+            todayButton.tintColor = #colorLiteral(red: 0.6551536711, green: 0.6574564995, blue: 0.6643649846, alpha: 1)
+            weeklyButton.tintColor = #colorLiteral(red: 0.3333333433, green: 0.3333333433, blue: 0.3333333433, alpha: 1)
+        }
     }
     
-    //MARK: - CollectionView DataSource
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-           return 5
-    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-       // let hourlyForcast = WeatherService.weather
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCollectionViewCell {
+    }
+    
+    @IBAction func todayButtonPressed(_ sender: UIButton) {
+        isToday = true
+        todayButton.tintColor = #colorLiteral(red: 0.3098039329, green: 0.01568627544, blue: 0.1294117719, alpha: 1)
+            weeklyButton.tintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+       
             
-            //cell.forecastIconImage.image = icon
-            //let forecast = WeatherService.getWeather(<#T##self: WeatherService##WeatherService#>)[indexPath.row]
-            //cell.updateView(with: forecast)
-                
-            return cell
-        }
-        return ForecastCollectionViewCell()
-            
-    //        forecastWeatherImage1.image = UIImage(systemName: weather.conditionIcon)
-    //
-    //        forcastTimeDate1.text =  weather.dt.timeStringFromUnixTime()
-    //
-    //        forecastTemperatureLabel1.text = weather.hour1Temp.tempString()
+        self.viewDidLoad()
+    }
+    @IBAction func weeklyButtonPressed(_ sender: UIButton) {
+        isToday = false
+        todayButton.tintColor = #colorLiteral(red: 0.6551536711, green: 0.6574564995, blue: 0.6643649846, alpha: 1)
+        weeklyButton.tintColor = #colorLiteral(red: 0.3333333433, green: 0.3333333433, blue: 0.3333333433, alpha: 1)
+        self.viewDidLoad()
     }
 }
 
 //MARK: - Weather Delegate
 extension ViewController: WeatherDelegate {
-    
     func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
         DispatchQueue.main.async {
             self.activityIndicatorView.startAnimating()
-            self.updateCurrentWeather(weatherService, weather: weather)
-//            self.cityLabel.text = weather.city.convertToCityName()
-//
-//            self.temperatureLabel.text = weather.temp.tempString()
-//            self.weatherLabel.text = weather.condition.capitalized
-//            self.weatherImage.image = UIImage(systemName: weather.conditionIcon)
-
-//            let time = weather.dt.timeStringFromUnixTime()
-//            let icon = UIImage(systemName: weather.conditionIcon)
-//            let temp = weather.temp.tempString()
+            self.cityLabel.text = weather.city.convertToCityName()
             
+            self.temperatureLabel.text = weather.temp.tempString()
+            self.weatherLabel.text = weather.condition.capitalized
+            self.weatherImage.image = UIImage(systemName: weather.conditionIcon)
+            
+            if self.isToday {
+                let weatherForecast = weather.hourlyForecast
+                self.timeDateLabel1.text = weatherForecast[0].dt.timeStringFromUnixTime()
+                self.timeDateLabel2.text = weatherForecast[1].dt.timeStringFromUnixTime()
+                self.timeDateLabel3.text = weatherForecast[2].dt.timeStringFromUnixTime()
+                self.timeDateLabel4.text = weatherForecast[3].dt.timeStringFromUnixTime()
+                self.timeDateLabel5.text = weatherForecast[4].dt.timeStringFromUnixTime()
+                
+                self.iconImage1.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage2.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage3.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage4.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage5.image = UIImage(systemName: weather.conditionIcon)
+                
+                self.tempLabel1.text = weatherForecast[0].forecastTemp.tempString()
+                self.tempLabel2.text = weatherForecast[1].forecastTemp.tempString()
+                self.tempLabel3.text = weatherForecast[2].forecastTemp.tempString()
+                self.tempLabel4.text = weatherForecast[3].forecastTemp.tempString()
+                self.tempLabel5.text = weatherForecast[4].forecastTemp.tempString()
+            } else {
+                let weatherForecast = weather.dailyForecast
+                
+                self.timeDateLabel1.text = weatherForecast[0].dt.dayStringFromUnixTime()
+                self.timeDateLabel2.text = weatherForecast[1].dt.dayStringFromUnixTime()
+                self.timeDateLabel3.text = weatherForecast[2].dt.dayStringFromUnixTime()
+                self.timeDateLabel4.text = weatherForecast[3].dt.dayStringFromUnixTime()
+                self.timeDateLabel5.text = weatherForecast[4].dt.dayStringFromUnixTime()
+                
+                self.iconImage1.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage2.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage3.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage4.image = UIImage(systemName: weather.conditionIcon)
+                self.iconImage5.image = UIImage(systemName: weather.conditionIcon)
+                
+                self.tempLabel1.text = weatherForecast[0].forecastTemp.tempString()
+                self.tempLabel2.text = weatherForecast[1].forecastTemp.tempString()
+                self.tempLabel3.text = weatherForecast[2].forecastTemp.tempString()
+                self.tempLabel4.text = weatherForecast[3].forecastTemp.tempString()
+                self.tempLabel5.text = weatherForecast[4].forecastTemp.tempString()
+            }
             self.activityIndicatorView.stopAnimating()
         }
-    }
-    
-    func updateCurrentWeather(_ weatherService: WeatherService, weather: WeatherModel) {
-        self.cityLabel.text = weather.city.convertToCityName()
-
-        self.temperatureLabel.text = weather.temp.tempString()
-        self.weatherLabel.text = weather.condition.capitalized
-        self.weatherImage.image = UIImage(systemName: weather.conditionIcon)
     }
     
     func onError(error: Error) {
         print(error)
     }
+    
+    // var weather: WeatherModel?
+    // would go in cell for row at.
+    //    cell.updateView(dailyForecast: weather!.dailyForecast[indexPath.row])
 }
-
 
 //MARK: - CLLocationManager Delegate
 extension ViewController: CLLocationManagerDelegate {
@@ -128,9 +174,18 @@ extension Double {
     func timeStringFromUnixTime() -> String {
         let date = NSDate(timeIntervalSince1970: self)
         let dateFormatter = DateFormatter()
-        // Returns date formatted as 12 hour time.
         dateFormatter.dateFormat = "h:mm"
         return dateFormatter.string(from: date as Date)
+    }
+}
+
+extension Date {
+    func dayStringFromUnixTime() -> String {
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateStyle = .full
+        let fullDate = dayFormatter.string(from: self)
+        let day = fullDate.split(separator: ",")
+        return String(day[0])
     }
 }
 
@@ -141,5 +196,3 @@ extension String {
         return String(cityName).replacingOccurrences(of: "_", with: " ")
     }
 }
-
-

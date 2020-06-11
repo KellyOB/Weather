@@ -36,14 +36,11 @@ class WeatherService {
             let task = session.dataTask(with: url) { (data, response, error) in
                 if let error = error {
                     self.delegate?.onError(error: error)
-                    print("there is an error here- perform request")
                     return
                 }
                 if let data = data {
                     if let weather = self.parseJSON(data) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
-                        //self.delegate?.updateView(self, weather: weather)
-                        print(weather)
                     }
                 }
             }
@@ -60,22 +57,35 @@ class WeatherService {
             let city = decodedData.timezone
             let main = decodedData.current.weather[0].description
             
-            var hourlyForecast = [Hourly]()
+            var hourlyForecast = [HourlyModel]()
             for i in 1...5 {
-                let time = decodedData.hourly[1].dt
-                //let icon = decodedData.hourly[1].weather[1].id
-                let temp = decodedData.hourly[1].temp
-                let hourly = Hourly(dt: time, temp: temp)
+                let time = decodedData.hourly[i].dt
+                let icon = decodedData.hourly[i].weather[0].id
+                let temp = decodedData.hourly[i].temp
+                
+                let hourly = HourlyModel(dt: time, forecastTemp: temp, conditionId: icon)
                 hourlyForecast.append(hourly)
             }
             
-            weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main, hourlyForecast: hourlyForecast)
-            print(hourlyForecast)
-            //dt: dt, forecastTemp: forecastTemp, forecastId: forecastId)
+            var dailyForecast = [DailyModel]()
+            for i in 1...5 {
+                let time = Date(timeIntervalSince1970: TimeInterval(decodedData.daily[i].dt))
+                
+                //let time = decodedData.daily[i].dt
+                let icon = decodedData.daily[i].weather[0].id
+                let temp = decodedData.daily[i].temp.day
+                
+                let daily = DailyModel(dt: time, forecastTemp: temp, conditionId: icon)
+                dailyForecast.append(daily)
+                
+            }
+            
+            weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main, hourlyForecast: hourlyForecast, dailyForecast: dailyForecast)
+       
             return weather
+        
         } catch {
             delegate?.onError(error: error)
-            print("error in the catch")
             return nil
         }
     }      

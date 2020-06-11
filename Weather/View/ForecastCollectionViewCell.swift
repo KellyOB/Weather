@@ -16,15 +16,25 @@ class ForecastCollectionViewCell: UICollectionViewCell {
     
     var weather: WeatherModel?
     
-//    func updateView(hourlyForecast: Hourly) {
+//    func updateView(hourlyForecast: HourlyModel) {
 //        forecastTimeLabel.text = String(hourlyForecast.dt)
 //        forecastIconImage.image = UIImage(systemName: "cart")
 //        forecastTempLabel.text = "1"
 //    }
-    func updateView() {
-        //forecastTimeLabel.text = "\(weather?.hourlyForecast[1].temp)"
-        forecastIconImage.image = UIImage(systemName: "cart")
-        forecastTempLabel.text = "2"
+    
+    
+    
+    
+    func updateView(dailyForecast: DailyModel) {
+        let tf = DateFormatter()
+        tf.dateStyle = .full
+        //let strDate = tf.string(from: dailyForecast.dt)
+       // let dateParts = strDate.split(separator: ",")
+       // let dayOfWeek = String(dateParts[0])
+        
+//        forecastTimeLabel.text = dayOfWeek
+//        forecastIconImage.image = UIImage(systemName: dailyForecast.conditionId)
+//        forecastTempLabel.text = String(format: "%.1f", dailyForecast.forecastTemp)
     }
     
     
