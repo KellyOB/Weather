@@ -71,13 +71,12 @@ class WeatherService {
             for i in 1...5 {
                 let time = Date(timeIntervalSince1970: TimeInterval(decodedData.daily[i].dt))
                 
-                //let time = decodedData.daily[i].dt
                 let icon = decodedData.daily[i].weather[0].id
                 let temp = decodedData.daily[i].temp.day
                 
                 let daily = DailyModel(dt: time, forecastTemp: temp, conditionId: icon)
                 dailyForecast.append(daily)
-                
+                print(daily)
             }
             
             weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main, hourlyForecast: hourlyForecast, dailyForecast: dailyForecast)
