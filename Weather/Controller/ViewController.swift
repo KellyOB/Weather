@@ -11,6 +11,7 @@ import CoreLocation
 
 class ViewController: UIViewController {
     
+    @IBOutlet var gradientBackground: GradientBackground!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var weatherLabel: UILabel!
@@ -45,20 +46,23 @@ class ViewController: UIViewController {
     
     var isToday = true {
         didSet {
-            if isToday {
-                todayButton.isSelected = true
-                weeklyButton.isSelected = false
-                todayLineView.isHidden = false
-                weeklyLineView.isHidden = true
-            } else {
-                todayButton.isSelected = false
-                weeklyButton.isSelected = true
-                todayLineView.isHidden = true
-                weeklyLineView.isHidden = false
-            }
+            isToday ? updateToday() : updateWeekly()
         }
     }
     
+    func updateToday() {
+        todayButton.isSelected = true
+        weeklyButton.isSelected = false
+        todayLineView.isHidden = false
+        weeklyLineView.isHidden = true
+    }
+    
+    func updateWeekly() {
+        todayButton.isSelected = false
+        weeklyButton.isSelected = true
+        todayLineView.isHidden = true
+        weeklyLineView.isHidden = false
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -71,6 +75,11 @@ class ViewController: UIViewController {
         dateFormatter.dateStyle = .full
         let today = "\(dateFormatter.string(from: Date() as Date))"
         dateLabel.text = String(today)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        gradientBackground.setGradientBackground()
     }
     
     @IBAction func todayButtonPressed(_ sender: UIButton) {
@@ -123,9 +132,18 @@ extension ViewController: WeatherDelegate {
         DispatchQueue.main.async {
             self.activityIndicatorView.startAnimating()
             self.cityLabel.text = weather.city.convertToCityName()
-            
             self.temperatureLabel.text = weather.temp.tempString()
             self.weatherLabel.text = weather.condition.capitalized
+            
+            self.weatherImage.layer.shadowOffset = CGSize(width: 12, height: 12)
+            self.weatherImage.layer.shadowColor = UIColor.black.cgColor
+            self.weatherImage.layer.shadowRadius = 9
+            self.weatherImage.layer.shadowOpacity = 0.25
+            self.weatherImage.layer.masksToBounds = false;
+            self.weatherImage.clipsToBounds = false;
+            
+            
+            
             self.weatherImage.image = UIImage(systemName: self.getIconName(weather.conditionId))
             
             if self.isToday {
@@ -194,37 +212,5 @@ extension ViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
-    }
-}
-
-extension Double {
-    func tempString() -> String {
-        return String(format: "%.1f", self) + "°"
-    }
-    
-    func timeStringFromUnixTime() -> String {
-        let date = NSDate(timeIntervalSince1970: self)
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "h:mm"
-        return dateFormatter.string(from: date as Date)
-    }
-}
-
-extension Date {
-    func dayStringFromUnixTime() -> String {
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateStyle = .full
-        let fullDate = dayFormatter.string(from: self)
-        let day = fullDate.split(separator: ",")
-        
-        return String(String(day[0]).prefix(3))
-    }
-}
-
-extension String {
-    func convertToCityName() -> String {
-        let index = self.range(of: "/")?.upperBound
-        let cityName = self.suffix(from: index!)
-        return String(cityName).replacingOccurrences(of: "_", with: " ")
     }
 }

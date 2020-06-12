@@ -76,7 +76,6 @@ class WeatherService {
                 
                 let daily = DailyModel(dt: time, forecastTemp: temp, conditionId: icon)
                 dailyForecast.append(daily)
-                print(daily)
             }
             
             weather = WeatherModel(conditionId: id, temp: temp, city: city, condition: main, hourlyForecast: hourlyForecast, dailyForecast: dailyForecast)

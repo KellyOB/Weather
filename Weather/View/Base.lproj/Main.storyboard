@@ -46,7 +46,6 @@
                                 <rect key="frame" x="70" y="177" width="180" height="135"/>
                                 <color key="tintColor" red="0.38823529411764707" green="0.38823529411764707" blue="0.39215686274509803" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="230" id="Shn-Jw-out"/>
                                     <constraint firstAttribute="width" secondItem="L66-hn-9iw" secondAttribute="height" multiplier="4:3" id="m7M-Yi-VWK"/>
                                 </constraints>
                             </imageView>
@@ -266,6 +265,7 @@
                         <outlet property="activityIndicatorView" destination="CLK-gX-oUv" id="AR5-g0-9fg"/>
                         <outlet property="cityLabel" destination="ozL-W0-C1F" id="jMa-0B-DhH"/>
                         <outlet property="dateLabel" destination="1tp-ax-Mxp" id="Oku-WN-sS3"/>
+                        <outlet property="gradientBackground" destination="8bC-Xf-vdC" id="2gX-Wr-M2K"/>
                         <outlet property="iconImage0" destination="e20-Yh-5qx" id="RJr-7t-RSJ"/>
                         <outlet property="iconImage1" destination="Fd1-4t-zcT" id="25F-9h-Ta5"/>
                         <outlet property="iconImage2" destination="B51-oa-xtj" id="6Dn-Cx-hFJ"/>
