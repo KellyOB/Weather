@@ -148,7 +148,9 @@ extension ViewController: WeatherDelegate {
                 self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
                 self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
                 self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
+                
             } else {
+                
                 let weatherForecast = weather.dailyForecast
                 
                 self.timeDateLabel0.text = weatherForecast[0].dt.dayStringFromUnixTime()
@@ -176,10 +178,6 @@ extension ViewController: WeatherDelegate {
     func onError(error: Error) {
         print(error)
     }
-    
-    // var weather: WeatherModel?
-    // would go in cell for row at.
-    //    cell.updateView(dailyForecast: weather!.dailyForecast[indexPath.row])
 }
 
 //MARK: - CLLocationManager Delegate
