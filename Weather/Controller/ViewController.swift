@@ -41,6 +41,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tempLabel3:UILabel!
     @IBOutlet weak var tempLabel4:UILabel!
     
+    var model: WeatherModel?
     var weatherService = WeatherService()
     var locationManager = CLLocationManager()
     
@@ -84,12 +85,14 @@ class ViewController: UIViewController {
     
     @IBAction func todayButtonPressed(_ sender: UIButton) {
         isToday = true
-        self.viewDidLoad()
+        guard let model = model else { return }
+        updateWeather(from: model)
     }
     
     @IBAction func weeklyButtonPressed(_ sender: UIButton) {
         isToday = false
-        self.viewDidLoad()
+        guard let model = model else { return }
+        updateWeather(from: model)
     }
     
     func getIconName(_ conditionId: Int) -> String {
@@ -124,11 +127,7 @@ class ViewController: UIViewController {
             return "cloud"
         }
     }
-}
-
-//MARK: - Weather Delegate
-extension ViewController: WeatherDelegate {
-    func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
+    func updateWeather(from weather: WeatherModel) {
         DispatchQueue.main.async {
             self.activityIndicatorView.startAnimating()
             self.cityLabel.text = weather.city.convertToCityName()
@@ -189,6 +188,14 @@ extension ViewController: WeatherDelegate {
             }
             self.activityIndicatorView.stopAnimating()
         }
+    }
+}
+
+//MARK: - Weather Delegate
+extension ViewController: WeatherDelegate {
+    func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
+        model = weather
+        updateWeather(from: weather)
     }
     
     func onError(error: Error) {
