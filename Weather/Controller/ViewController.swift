@@ -139,10 +139,8 @@ extension ViewController: WeatherDelegate {
             self.weatherImage.layer.shadowColor = UIColor.black.cgColor
             self.weatherImage.layer.shadowRadius = 9
             self.weatherImage.layer.shadowOpacity = 0.25
-            self.weatherImage.layer.masksToBounds = false;
-            self.weatherImage.clipsToBounds = false;
-            
-            
+            self.weatherImage.layer.masksToBounds = false
+            self.weatherImage.clipsToBounds = false
             
             self.weatherImage.image = UIImage(systemName: self.getIconName(weather.conditionId))
             
