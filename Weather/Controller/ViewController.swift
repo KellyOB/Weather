@@ -43,7 +43,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
-        currentDateLabel.text = Date().dayStringFull()
+        currentDateLabel.text = Date().todayString()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,8 +68,17 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func updateCurrentWeather() {
         currentLocationLabel.text = weatherData?.timezone.convertToCityName()
         currentWeatherDescriptionLabel.text = weatherData?.current.weather[0].description.capitalized
+        
         currentWeatherIcon.image = UIImage(systemName: getIconName((weatherData?.current.weather[0].id)!))
+        
         currentTempLabel.text = weatherData?.current.temp.tempString()
+        
+//        self.currentWeatherIcon.layer.shadowOffset = CGSize(width: 12, height: 12)
+//        self.currentWeatherIcon.layer.shadowColor = UIColor.black.cgColor
+//        self.currentWeatherIcon.layer.shadowRadius = 9
+//        self.currentWeatherIcon.layer.shadowOpacity = 0.25
+//        self.currentWeatherIcon.layer.masksToBounds = false
+//        self.currentWeatherIcon.clipsToBounds = false
     }
     
     
@@ -123,13 +132,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                     
                     cell.tempLabel.text = hourly.temp.tempString()
                 } else {
-                    let daily = weatherForecast.daily[indexPath.row]
-                    //let day = Date(daily.dt) as Date
-                    cell.dateTimeLabel.text = "Mon" //day.dayStringFromUnixTime()
+                    let daily = weatherForecast.daily[indexPath.row + 1]
+                
+                    cell.dateTimeLabel.text = daily.dt.dayStringFromUnixTime(daily.dt)
 
                     cell.iconImage.image = UIImage(systemName: self.getIconName(daily.weather[0].id))
-                    
-                    
+                      
                     cell.tempLabel.text = daily.temp.day.tempString()
                     print(daily.temp.day.tempString())
                 }

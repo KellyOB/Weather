@@ -20,11 +20,9 @@ extension Date {
 }
 
 extension Date {
-    func dayStringFull() -> String {
+    func todayString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full
-        let today = (dateFormatter.string(from: self))
-        //currentDateLabel.text = String(today)
-        return String(today)
+        return String(dateFormatter.string(from: self))
     }
 }
