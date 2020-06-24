@@ -18,3 +18,13 @@ extension Date {
         return String(String(day[0]).prefix(3))
     }
 }
+
+extension Date {
+    func dayStringFull() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .full
+        let today = (dateFormatter.string(from: self))
+        //currentDateLabel.text = String(today)
+        return String(today)
+    }
+}

@@ -9,40 +9,22 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var gradientBackground: GradientBackground!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var cityLabel: UILabel!
-    @IBOutlet weak var weatherLabel: UILabel!
-    @IBOutlet weak var weatherImage: UIImageView!
-    @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var currentDateLabel: UILabel!
+    @IBOutlet weak var currentLocationLabel: UILabel!
+    @IBOutlet weak var currentWeatherDescriptionLabel: UILabel!
+    @IBOutlet weak var currentWeatherIcon: UIImageView!
+    @IBOutlet weak var currentTempLabel: UILabel!
     @IBOutlet weak var todayButton: UIButton!
     @IBOutlet weak var todayLineView: UIView!
     @IBOutlet weak var weeklyButton: UIButton!
     @IBOutlet weak var weeklyLineView: UIView!
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
-    @IBOutlet weak var timeDateLabel0:UILabel!
-    @IBOutlet weak var timeDateLabel1:UILabel!
-    @IBOutlet weak var timeDateLabel2:UILabel!
-    @IBOutlet weak var timeDateLabel3:UILabel!
-    @IBOutlet weak var timeDateLabel4:UILabel!
-    
-    @IBOutlet weak var iconImage0:UIImageView!
-    @IBOutlet weak var iconImage1:UIImageView!
-    @IBOutlet weak var iconImage2:UIImageView!
-    @IBOutlet weak var iconImage3:UIImageView!
-    @IBOutlet weak var iconImage4:UIImageView!
-    
-    @IBOutlet weak var tempLabel0:UILabel!
-    @IBOutlet weak var tempLabel1:UILabel!
-    @IBOutlet weak var tempLabel2:UILabel!
-    @IBOutlet weak var tempLabel3:UILabel!
-    @IBOutlet weak var tempLabel4:UILabel!
-    
-    var model: WeatherModel?
-    var weatherService = WeatherService()
+    var weatherData: WeatherData?
     var locationManager = CLLocationManager()
     
     var isToday = true {
@@ -51,31 +33,17 @@ class ViewController: UIViewController {
         }
     }
     
-    func updateToday() {
-        todayButton.isSelected = true
-        weeklyButton.isSelected = false
-        todayLineView.isHidden = false
-        weeklyLineView.isHidden = true
-    }
-    
-    func updateWeekly() {
-        todayButton.isSelected = false
-        weeklyButton.isSelected = true
-        todayLineView.isHidden = true
-        weeklyLineView.isHidden = false
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        weatherService.delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .full
-        let today = "\(dateFormatter.string(from: Date() as Date))"
-        dateLabel.text = String(today)
+        currentDateLabel.text = Date().dayStringFull()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,16 +51,84 @@ class ViewController: UIViewController {
         gradientBackground.setGradientBackground()
     }
     
+    func getWeather() {
+        WeatherService.shared.getWeather { (weatherData) in
+            DispatchQueue.main.async {
+                self.activityIndicatorView.startAnimating()
+                debugPrint("hjhjkkhkjk\(weatherData)")
+                self.weatherData = weatherData
+
+                self.updateCurrentWeather()
+                self.collectionView.reloadData()
+                self.activityIndicatorView.stopAnimating()
+            }
+        }
+    }
+    
+    func updateCurrentWeather() {
+        currentLocationLabel.text = weatherData?.timezone.convertToCityName()
+        currentWeatherDescriptionLabel.text = weatherData?.current.weather[0].description.capitalized
+        currentWeatherIcon.image = UIImage(systemName: getIconName((weatherData?.current.weather[0].id)!))
+        currentTempLabel.text = weatherData?.current.temp.tempString()
+    }
+    
+    
     @IBAction func todayButtonPressed(_ sender: UIButton) {
-        isToday = true
-        guard let model = model else { return }
-        updateWeather(from: model)
+        updateToday()
     }
     
     @IBAction func weeklyButtonPressed(_ sender: UIButton) {
+        updateWeekly()
+    }
+    
+    func updateToday() {
+        todayButton.isSelected = true
+        weeklyButton.isSelected = false
+        todayLineView.isHidden = false
+        weeklyLineView.isHidden = true
+        isToday = true
+    }
+    
+    func updateWeekly() {
+        todayButton.isSelected = false
+        weeklyButton.isSelected = true
+        todayLineView.isHidden = true
+        weeklyLineView.isHidden = false
         isToday = false
-        guard let model = model else { return }
-        updateWeather(from: model)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell {
+            if let weatherForecast = weatherData {
+                if isToday {
+                    let hourlyTime = weatherForecast.hourly[indexPath.row + 1].dt
+                    cell.dateTimeLabel.text = hourlyTime.timeStringFromUnixTime()
+
+                    let hourlyIcon = weatherForecast.hourly[indexPath.row + 1].weather[0].id
+                    cell.iconImage.image = UIImage(systemName: self.getIconName(hourlyIcon))
+                    
+                    let hourlyTemp = weatherForecast.hourly[indexPath.row + 1].temp
+                    cell.tempLabel.text = hourlyTemp.tempString()
+                } else {
+                   // let dailyDay = weatherForecast.daily[indexPath.row + 1].dt
+                   // cell.dateTimeLabel.text = "ty"//dailyDay.dayStringFromUnixTime()
+
+                   // let dailyIcon = weatherForecast.daily[indexPath.row + 1].weather[0].id
+                   // cell.iconImage.image = UIImage(systemName: self.getIconName(dailyIcon))
+                    
+                    //let dailyTemp = weatherForecast.daily[indexPath.row + 1].temp
+                    //cell.tempLabel.text = dailyTemp.tempString()
+                }
+                
+                
+            }
+            return cell
+        }
+        return UICollectionViewCell()
     }
     
     func getIconName(_ conditionId: Int) -> String {
@@ -127,94 +163,95 @@ class ViewController: UIViewController {
             return "cloud"
         }
     }
-    func updateWeather(from weather: WeatherModel) {
-        DispatchQueue.main.async {
-            self.activityIndicatorView.startAnimating()
-            self.cityLabel.text = weather.city.convertToCityName()
-            self.temperatureLabel.text = weather.temp.tempString()
-            self.weatherLabel.text = weather.condition.capitalized
-            
-            self.weatherImage.layer.shadowOffset = CGSize(width: 12, height: 12)
-            self.weatherImage.layer.shadowColor = UIColor.black.cgColor
-            self.weatherImage.layer.shadowRadius = 9
-            self.weatherImage.layer.shadowOpacity = 0.25
-            self.weatherImage.layer.masksToBounds = false
-            self.weatherImage.clipsToBounds = false
-            
-            self.weatherImage.image = UIImage(systemName: self.getIconName(weather.conditionId))
-            
-            if self.isToday {
-                let weatherForecast = weather.hourlyForecast
-                       
-                self.timeDateLabel0.text = weatherForecast[0].dt.timeStringFromUnixTime()
-                self.timeDateLabel1.text = weatherForecast[1].dt.timeStringFromUnixTime()
-                self.timeDateLabel2.text = weatherForecast[2].dt.timeStringFromUnixTime()
-                self.timeDateLabel3.text = weatherForecast[3].dt.timeStringFromUnixTime()
-                self.timeDateLabel4.text = weatherForecast[4].dt.timeStringFromUnixTime()
-               
-                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
-                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
-                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
-                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
-                self.iconImage4.image = UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
-                
-                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
-                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
-                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
-                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
-                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
-                
-            } else {
-                
-                let weatherForecast = weather.dailyForecast
-                
-                self.timeDateLabel0.text = weatherForecast[0].dt.dayStringFromUnixTime()
-                self.timeDateLabel1.text = weatherForecast[1].dt.dayStringFromUnixTime()
-                self.timeDateLabel2.text = weatherForecast[2].dt.dayStringFromUnixTime()
-                self.timeDateLabel3.text = weatherForecast[3].dt.dayStringFromUnixTime()
-                self.timeDateLabel4.text = weatherForecast[4].dt.dayStringFromUnixTime()
-                
-                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
-                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
-                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
-                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
-                self.iconImage4.image =  UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
-                 
-                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
-                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
-                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
-                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
-                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
-            }
-            self.activityIndicatorView.stopAnimating()
-        }
-    }
+//    func updateWeather(from weather: WeatherModel) {
+//        DispatchQueue.main.async {
+//            self.activityIndicatorView.startAnimating()
+//            self.cityLabel.text = weather.city.convertToCityName()
+//            self.currentTempLabel.text = weather.temp.tempString()
+//            self.currentWeatherDescriptionLabel.text = weather.condition.capitalized
+//
+//            self.currentWeatherIcon.layer.shadowOffset = CGSize(width: 12, height: 12)
+//            self.currentWeatherIcon.layer.shadowColor = UIColor.black.cgColor
+//            self.currentWeatherIcon.layer.shadowRadius = 9
+//            self.currentWeatherIcon.layer.shadowOpacity = 0.25
+//            self.currentWeatherIcon.layer.masksToBounds = false
+//            self.currentWeatherIcon.clipsToBounds = false
+//
+//            self.currentWeatherIcon.image = UIImage(systemName: self.getIconName(weather.conditionId))
+//
+//            if self.isToday {
+//                let weatherForecast = weather.hourlyForecast
+//
+//                self.timeDateLabel0.text = weatherForecast[0].dt.timeStringFromUnixTime()
+//                self.timeDateLabel1.text = weatherForecast[1].dt.timeStringFromUnixTime()
+//                self.timeDateLabel2.text = weatherForecast[2].dt.timeStringFromUnixTime()
+//                self.timeDateLabel3.text = weatherForecast[3].dt.timeStringFromUnixTime()
+//                self.timeDateLabel4.text = weatherForecast[4].dt.timeStringFromUnixTime()
+//
+//                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
+//                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
+//                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
+//                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
+//                self.iconImage4.image = UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
+//
+//                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
+//                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
+//                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
+//                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
+//                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
+//
+//            } else {
+//
+//                let weatherForecast = weather.dailyForecast
+//
+//                self.timeDateLabel0.text = weatherForecast[0].dt.dayStringFromUnixTime()
+//                self.timeDateLabel1.text = weatherForecast[1].dt.dayStringFromUnixTime()
+//                self.timeDateLabel2.text = weatherForecast[2].dt.dayStringFromUnixTime()
+//                self.timeDateLabel3.text = weatherForecast[3].dt.dayStringFromUnixTime()
+//                self.timeDateLabel4.text = weatherForecast[4].dt.dayStringFromUnixTime()
+//
+//                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
+//                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
+//                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
+//                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
+//                self.iconImage4.image =  UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
+//
+//                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
+//                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
+//                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
+//                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
+//                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
+//            }
+//            self.activityIndicatorView.stopAnimating()
+//        }
+//    }
 }
 
 //MARK: - Weather Delegate
-extension ViewController: WeatherDelegate {
-    func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
-        model = weather
-        updateWeather(from: weather)
-    }
-    
-    func onError(error: Error) {
-        print(error)
-    }
-}
+//extension ViewController: WeatherDelegate {
+//    func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
+//        model = weather
+//        updateWeather(from: weather)
+//    }
+//
+//    func onError(error: Error) {
+//        print(error)
+//    }
+//}
 
 //MARK: - CLLocationManager Delegate
 extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
+
         if let location = locations.last {
             locationManager.stopUpdatingLocation()
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
-            weatherService.getWeather(latitude: lat, longitude: lon)
+            WeatherService.shared.getLocation(latitude: lat, longitude: lon)
+            getWeather()
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }

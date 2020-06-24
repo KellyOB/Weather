@@ -21,6 +21,7 @@
 		BED547F7248AA5230079AD73 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED547F6248AA5230079AD73 /* WeatherService.swift */; };
 		BED547FA248AAD9C0079AD73 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED547F9248AAD9C0079AD73 /* WeatherData.swift */; };
 		BED547FE248ADE4B0079AD73 /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED547FD248ADE4B0079AD73 /* WeatherModel.swift */; };
+		BEEFC82224A2AECC00109D3F /* ForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEFC82124A2AECC00109D3F /* ForecastCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		BED547F6248AA5230079AD73 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		BED547F9248AAD9C0079AD73 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 		BED547FD248ADE4B0079AD73 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
+		BEEFC82124A2AECC00109D3F /* ForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				BE3151282489F34000D47503 /* Main.storyboard */,
+				BEEFC82124A2AECC00109D3F /* ForecastCell.swift */,
 				BE1235DA24943C1500D938DB /* GradientBackground.swift */,
 			);
 			path = View;
@@ -206,6 +209,7 @@
 				BE3151232489F34000D47503 /* AppDelegate.swift in Sources */,
 				BED547F7248AA5230079AD73 /* WeatherService.swift in Sources */,
 				BED547FE248ADE4B0079AD73 /* WeatherModel.swift in Sources */,
+				BEEFC82224A2AECC00109D3F /* ForecastCell.swift in Sources */,
 				BE1235D324942D0800D938DB /* Date+ConvertDate.swift in Sources */,
 				BE1235DB24943C1500D938DB /* GradientBackground.swift in Sources */,
 				BE3151252489F34000D47503 /* SceneDelegate.swift in Sources */,
