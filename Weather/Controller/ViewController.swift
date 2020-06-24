@@ -27,11 +27,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var weatherData: WeatherData?
     var locationManager = CLLocationManager()
     
-    var isToday = true {
-        didSet {
-            isToday ? updateToday() : updateWeekly()
-        }
-    }
+    var isToday = false //{
+        //didSet {
+           // isToday ? updateToday() : updateWeekly()
+        //}
+   //}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,11 +74,21 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     @IBAction func todayButtonPressed(_ sender: UIButton) {
-        updateToday()
+        //updateToday()
+        //todayButton.isSelected = true
+        //weeklyButton.isSelected = false
+        //todayLineView.isHidden = false
+        //weeklyLineView.isHidden = true
+        isToday = true
     }
     
     @IBAction func weeklyButtonPressed(_ sender: UIButton) {
-        updateWeekly()
+        //updateWeekly()
+        //todayButton.isSelected = false
+       // weeklyButton.isSelected = true
+        //todayLineView.isHidden = true
+       // weeklyLineView.isHidden = false
+        isToday = false
     }
     
     func updateToday() {
@@ -105,23 +115,23 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell {
             if let weatherForecast = weatherData {
                 if isToday {
-                    let hourlyTime = weatherForecast.hourly[indexPath.row + 1].dt
-                    cell.dateTimeLabel.text = hourlyTime.timeStringFromUnixTime()
-
-                    let hourlyIcon = weatherForecast.hourly[indexPath.row + 1].weather[0].id
-                    cell.iconImage.image = UIImage(systemName: self.getIconName(hourlyIcon))
+                    let hourly = weatherForecast.hourly[indexPath.row + 1]
+                   
+                    cell.dateTimeLabel.text = hourly.dt.timeStringFromUnixTime()
+  
+                    cell.iconImage.image = UIImage(systemName: self.getIconName(hourly.weather[0].id))
                     
-                    let hourlyTemp = weatherForecast.hourly[indexPath.row + 1].temp
-                    cell.tempLabel.text = hourlyTemp.tempString()
+                    cell.tempLabel.text = hourly.temp.tempString()
                 } else {
-                   // let dailyDay = weatherForecast.daily[indexPath.row + 1].dt
-                   // cell.dateTimeLabel.text = "ty"//dailyDay.dayStringFromUnixTime()
+                    let daily = weatherForecast.daily[indexPath.row]
+                    //let day = Date(daily.dt) as Date
+                    cell.dateTimeLabel.text = "Mon" //day.dayStringFromUnixTime()
 
-                   // let dailyIcon = weatherForecast.daily[indexPath.row + 1].weather[0].id
-                   // cell.iconImage.image = UIImage(systemName: self.getIconName(dailyIcon))
+                    cell.iconImage.image = UIImage(systemName: self.getIconName(daily.weather[0].id))
                     
-                    //let dailyTemp = weatherForecast.daily[indexPath.row + 1].temp
-                    //cell.tempLabel.text = dailyTemp.tempString()
+                    
+                    cell.tempLabel.text = daily.temp.day.tempString()
+                    print(daily.temp.day.tempString())
                 }
                 
                 
