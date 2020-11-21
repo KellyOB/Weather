@@ -23,7 +23,8 @@ A weather app that gets the weather forecast for the user's current location.
 
 
 ####  APIService.swift file hidden by .gitignore file
-```class APIService
+```swift
+class APIService
 {
     static let shared = APIService()
     let apiKey = "YOUR API KEY HERE"
