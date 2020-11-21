@@ -16,15 +16,13 @@ A weather app that gets the weather forecast for the user's current location.
 <img src = "https://user-images.githubusercontent.com/32715761/99889350-14c95a00-2c09-11eb-9758-36121e3004b7.png" width="200" hspace="20" /> <img src = "https://user-images.githubusercontent.com/32715761/99889414-b3ee5180-2c09-11eb-9fdd-b0c0e056ea49.png" width="200" hspace="20" />
 
 # Technologies Used
-Uses weather API
-MVC design pattern
-CLLocationManager to pull in location 
-
-DispatchQueue to get the weather data
-Special Gotchas of your projects (Problems you faced, unique elements of your project)
+* OpenWeather API
+* MVC design pattern
+* CLLocationManager to pull in location 
+* DispatchQueue to get the weather data
 
 
-* APIService file hidden by .gitignore file
+--  APIService file hidden by .gitignore file
 class APIService
 {
     static let shared = APIService()
