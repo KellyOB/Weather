@@ -22,9 +22,10 @@ A weather app that gets the weather forecast for the user's current location.
 * DispatchQueue to get the weather data
 
 
---  APIService file hidden by .gitignore file
-class APIService
+####  APIService.swift file hidden by .gitignore file
+```class APIService
 {
     static let shared = APIService()
     let apiKey = "YOUR API KEY HERE"
 }
+```
