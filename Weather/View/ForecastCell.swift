@@ -16,17 +16,13 @@ class ForecastCell: UICollectionViewCell {
     
     func configure(hour: Hourly) {
         dateTimeLabel.text = hour.dt.timeStringFromUnixTime()
-
         iconImage.image = hour.weather[0].icon
-        
         tempLabel.text = hour.temp.tempString()
     }
     
     func configure(day: Daily) {
         dateTimeLabel.text = day.dt.dayStringFromUnixTime(day.dt)
-
         iconImage.image = day.weather[0].icon
-          
         tempLabel.text = day.temp.day.tempString()
     }  
 }
