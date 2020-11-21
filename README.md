@@ -11,8 +11,9 @@ A weather app that gets the weather forecast for the user's current location.
 * Have a button/tab that says "Today". If selected it shows 5 hours worth of weather (see screenshot)
 * Have a button/tab that says "Weekly". If selected it shows 5 days worth of weather (see screenshot)
 
-#Screenshots
+# Screenshots
 
+<img src = "https://user-images.githubusercontent.com/32715761/99889350-14c95a00-2c09-11eb-9758-36121e3004b7.png" width="100"/>
 
 Demo(Images, Video links, Live Demo links)
 
