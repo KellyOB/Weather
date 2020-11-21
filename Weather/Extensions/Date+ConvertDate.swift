@@ -9,17 +9,6 @@
 import Foundation
 
 extension Date {
-    func dayStringFromUnixTime() -> String {
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateStyle = .full
-        let fullDate = dayFormatter.string(from: self)
-        let day = fullDate.split(separator: ",")
-        
-        return String(String(day[0]).prefix(3))
-    }
-}
-
-extension Date {
     func todayString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full

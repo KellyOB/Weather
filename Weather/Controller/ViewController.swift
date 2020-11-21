@@ -27,12 +27,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var weatherData: WeatherData?
     var locationManager = CLLocationManager()
     
-    var isToday = false //{
-        //didSet {
-           // isToday ? updateToday() : updateWeekly()
-        //}
-   //}
-    
+    var isToday = true
+     
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,13 +47,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         gradientBackground.setGradientBackground()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
     func getWeather() {
         WeatherService.shared.getWeather { (weatherData) in
             DispatchQueue.main.async {
                 self.activityIndicatorView.startAnimating()
-                debugPrint("hjhjkkhkjk\(weatherData)")
                 self.weatherData = weatherData
-
                 self.updateCurrentWeather()
                 self.collectionView.reloadData()
                 self.activityIndicatorView.stopAnimating()
@@ -68,52 +67,26 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func updateCurrentWeather() {
         currentLocationLabel.text = weatherData?.timezone.convertToCityName()
         currentWeatherDescriptionLabel.text = weatherData?.current.weather[0].description.capitalized
-        
-        currentWeatherIcon.image = UIImage(systemName: getIconName((weatherData?.current.weather[0].id)!))
-        
+        currentWeatherIcon.image = weatherData?.current.weather[0].icon
         currentTempLabel.text = weatherData?.current.temp.tempString()
+    }
         
-//        self.currentWeatherIcon.layer.shadowOffset = CGSize(width: 12, height: 12)
-//        self.currentWeatherIcon.layer.shadowColor = UIColor.black.cgColor
-//        self.currentWeatherIcon.layer.shadowRadius = 9
-//        self.currentWeatherIcon.layer.shadowOpacity = 0.25
-//        self.currentWeatherIcon.layer.masksToBounds = false
-//        self.currentWeatherIcon.clipsToBounds = false
-    }
-    
-    
     @IBAction func todayButtonPressed(_ sender: UIButton) {
-        //updateToday()
-        //todayButton.isSelected = true
-        //weeklyButton.isSelected = false
-        //todayLineView.isHidden = false
-        //weeklyLineView.isHidden = true
         isToday = true
-    }
-    
-    @IBAction func weeklyButtonPressed(_ sender: UIButton) {
-        //updateWeekly()
-        //todayButton.isSelected = false
-       // weeklyButton.isSelected = true
-        //todayLineView.isHidden = true
-       // weeklyLineView.isHidden = false
-        isToday = false
-    }
-    
-    func updateToday() {
         todayButton.isSelected = true
         weeklyButton.isSelected = false
         todayLineView.isHidden = false
         weeklyLineView.isHidden = true
-        isToday = true
+        collectionView.reloadData()
     }
     
-    func updateWeekly() {
+    @IBAction func weeklyButtonPressed(_ sender: UIButton) {
+        isToday = false
         todayButton.isSelected = false
         weeklyButton.isSelected = true
         todayLineView.isHidden = true
         weeklyLineView.isHidden = false
-        isToday = false
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -125,24 +98,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             if let weatherForecast = weatherData {
                 if isToday {
                     let hourly = weatherForecast.hourly[indexPath.row + 1]
-                   
-                    cell.dateTimeLabel.text = hourly.dt.timeStringFromUnixTime()
-  
-                    cell.iconImage.image = UIImage(systemName: self.getIconName(hourly.weather[0].id))
                     
-                    cell.tempLabel.text = hourly.temp.tempString()
+                    cell.configure(hour: hourly)
+                    
                 } else {
                     let daily = weatherForecast.daily[indexPath.row + 1]
                 
-                    cell.dateTimeLabel.text = daily.dt.dayStringFromUnixTime(daily.dt)
-
-                    cell.iconImage.image = UIImage(systemName: self.getIconName(daily.weather[0].id))
-                      
-                    cell.tempLabel.text = daily.temp.day.tempString()
-                    print(daily.temp.day.tempString())
+                    cell.configure(day: daily)
                 }
-                
-                
             }
             return cell
         }
@@ -181,81 +144,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             return "cloud"
         }
     }
-//    func updateWeather(from weather: WeatherModel) {
-//        DispatchQueue.main.async {
-//            self.activityIndicatorView.startAnimating()
-//            self.cityLabel.text = weather.city.convertToCityName()
-//            self.currentTempLabel.text = weather.temp.tempString()
-//            self.currentWeatherDescriptionLabel.text = weather.condition.capitalized
-//
-//            self.currentWeatherIcon.layer.shadowOffset = CGSize(width: 12, height: 12)
-//            self.currentWeatherIcon.layer.shadowColor = UIColor.black.cgColor
-//            self.currentWeatherIcon.layer.shadowRadius = 9
-//            self.currentWeatherIcon.layer.shadowOpacity = 0.25
-//            self.currentWeatherIcon.layer.masksToBounds = false
-//            self.currentWeatherIcon.clipsToBounds = false
-//
-//            self.currentWeatherIcon.image = UIImage(systemName: self.getIconName(weather.conditionId))
-//
-//            if self.isToday {
-//                let weatherForecast = weather.hourlyForecast
-//
-//                self.timeDateLabel0.text = weatherForecast[0].dt.timeStringFromUnixTime()
-//                self.timeDateLabel1.text = weatherForecast[1].dt.timeStringFromUnixTime()
-//                self.timeDateLabel2.text = weatherForecast[2].dt.timeStringFromUnixTime()
-//                self.timeDateLabel3.text = weatherForecast[3].dt.timeStringFromUnixTime()
-//                self.timeDateLabel4.text = weatherForecast[4].dt.timeStringFromUnixTime()
-//
-//                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
-//                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
-//                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
-//                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
-//                self.iconImage4.image = UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
-//
-//                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
-//                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
-//                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
-//                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
-//                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
-//
-//            } else {
-//
-//                let weatherForecast = weather.dailyForecast
-//
-//                self.timeDateLabel0.text = weatherForecast[0].dt.dayStringFromUnixTime()
-//                self.timeDateLabel1.text = weatherForecast[1].dt.dayStringFromUnixTime()
-//                self.timeDateLabel2.text = weatherForecast[2].dt.dayStringFromUnixTime()
-//                self.timeDateLabel3.text = weatherForecast[3].dt.dayStringFromUnixTime()
-//                self.timeDateLabel4.text = weatherForecast[4].dt.dayStringFromUnixTime()
-//
-//                self.iconImage0.image = UIImage(systemName: self.getIconName(weatherForecast[0].conditionId))
-//                self.iconImage1.image = UIImage(systemName: self.getIconName(weatherForecast[1].conditionId))
-//                self.iconImage2.image = UIImage(systemName: self.getIconName(weatherForecast[2].conditionId))
-//                self.iconImage3.image = UIImage(systemName: self.getIconName(weatherForecast[3].conditionId))
-//                self.iconImage4.image =  UIImage(systemName: self.getIconName(weatherForecast[4].conditionId))
-//
-//                self.tempLabel0.text = weatherForecast[0].forecastTemp.tempString()
-//                self.tempLabel1.text = weatherForecast[1].forecastTemp.tempString()
-//                self.tempLabel2.text = weatherForecast[2].forecastTemp.tempString()
-//                self.tempLabel3.text = weatherForecast[3].forecastTemp.tempString()
-//                self.tempLabel4.text = weatherForecast[4].forecastTemp.tempString()
-//            }
-//            self.activityIndicatorView.stopAnimating()
-//        }
-//    }
 }
-
-//MARK: - Weather Delegate
-//extension ViewController: WeatherDelegate {
-//    func didUpdateWeather(_ weatherService: WeatherService, weather: WeatherModel) {
-//        model = weather
-//        updateWeather(from: weather)
-//    }
-//
-//    func onError(error: Error) {
-//        print(error)
-//    }
-//}
 
 //MARK: - CLLocationManager Delegate
 extension ViewController: CLLocationManagerDelegate {
@@ -274,3 +163,32 @@ extension ViewController: CLLocationManagerDelegate {
         print(error)
     }
 }
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension ViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        // number of columns desired
+        let columns: CGFloat = 5
+        
+        // Match spacing below
+        let spacing: CGFloat = 5
+        let totalHorizontalSpacing = (columns - 1) * spacing
+        
+        let itemWidth = (collectionView.bounds.width - totalHorizontalSpacing) / columns
+        let itemSize = CGSize(width: itemWidth, height: itemWidth * 1.3)
+        
+        return itemSize
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        // horizontal space between items
+        return 5
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        // vertical space between items
+        return 5
+    }
+}
+
