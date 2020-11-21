@@ -13,9 +13,8 @@ A weather app that gets the weather forecast for the user's current location.
 
 # Screenshots
 
-<img src = "https://user-images.githubusercontent.com/32715761/99889350-14c95a00-2c09-11eb-9758-36121e3004b7.png" width="100"/>
-
-Demo(Images, Video links, Live Demo links)
+<img src = "https://user-images.githubusercontent.com/32715761/99889350-14c95a00-2c09-11eb-9758-36121e3004b7.png" width="200" />
+<img src = "https://user-images.githubusercontent.com/32715761/99889414-b3ee5180-2c09-11eb-9fdd-b0c0e056ea49.png" width="200" style: "float:left" />
 
 # Technologies Used
 Uses weather API
