@@ -12,8 +12,8 @@ import CoreLocation
 class WeatherService {
     
     static let shared = WeatherService()
-    
-    let URL_BASE = "https://api.openweathermap.org/data/2.5/onecall?appid=fb18c3a9c1c6ebf133fd0f69ba87ec46&units=imperial"
+    let API_KEY = APIService.shared.apiKey
+    let URL_BASE = "https://api.openweathermap.org/data/2.5/onecall?appid=API_KEY&units=imperial"
     
     var lat = "33.441792"
     var lon = "-94.037689"
