@@ -1,6 +1,6 @@
 # Weather
 
-
+Week 8 Exercise for Devslopes Academy
 A weather app that gets the weather forecast for the user's current location.
 
 # Requirements
