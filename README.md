@@ -5,8 +5,8 @@ Week 8 Project for Devslopes Academy
 A weather app that gets the weather forecast for the user's current location.
 
 # Requirements
-* Your app will grab your current location and automatically pull up today's weather
-* You will show the appropriate icon to match the weather
+* App will grab your current location and automatically pull up today's weather
+* Show the appropriate icon to match the weather
 * Show the title of the current weather, such as "Cloudy"
 * Show today's date
 * Have a button/tab that says "Today". If selected it shows 5 hours worth of weather (see screenshot)
